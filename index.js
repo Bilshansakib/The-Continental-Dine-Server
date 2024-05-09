@@ -32,7 +32,14 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
+    // get all foods
+    const foodsCollection = client.db("myRestaurant").collection("foodItems");
+    app.get("/foods", async (req, res) => {
+      const result = await foodsCollection.find().toArray();
+
+      res.send(result);
+    });
 
     // auth related api jwt generate
     app.post("/jwt", async (req, res) => {
