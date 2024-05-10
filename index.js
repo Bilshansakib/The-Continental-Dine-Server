@@ -35,6 +35,9 @@ async function run() {
     // await client.connect();
     // get all foods
     const foodsCollection = client.db("myRestaurant").collection("foodItems");
+    const orderCollection = client.db("myRestaurant").collection("orders");
+
+    // all foods
     app.get("/foods", async (req, res) => {
       const result = await foodsCollection.find().toArray();
 
@@ -47,7 +50,19 @@ async function run() {
       const result = await foodsCollection.findOne(query);
       res.send(result);
     });
-
+    app.get("/purchase/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await foodsCollection.findOne(query);
+      res.send(result);
+    });
+    // save order
+    app.post("/order", async (req, res) => {
+      const orderPlaced = req.body;
+      console.log(orderPlaced);
+      const result = await orderCollection.insertOne(orderPlaced);
+      res.send(result);
+    });
     // auth related api jwt generate
     app.post("/jwt", async (req, res) => {
       const user = req.body;
