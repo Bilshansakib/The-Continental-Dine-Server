@@ -63,6 +63,16 @@ async function run() {
       const result = await orderCollection.insertOne(orderPlaced);
       res.send(result);
     });
+
+    // save food item
+    app.post("/food", async (req, res) => {
+      const foodData = req.body;
+
+      const result = await foodsCollection.insertOne(foodData);
+      res.send(result);
+      console.log(result);
+    });
+
     // auth related api jwt generate
     app.post("/jwt", async (req, res) => {
       const user = req.body;
