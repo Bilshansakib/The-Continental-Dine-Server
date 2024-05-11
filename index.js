@@ -73,6 +73,22 @@ async function run() {
       console.log(result);
     });
 
+    // get food table by email
+    app.get("/foods/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { "buyer.email": email };
+      const result = await foodsCollection.find(query).toArray();
+      res.send(result);
+    });
+
+    // delete food item
+    app.delete("/food/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await foodsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // auth related api jwt generate
     app.post("/jwt", async (req, res) => {
       const user = req.body;
