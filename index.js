@@ -11,7 +11,11 @@ const app = express();
 // middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://assign11-client.web.app",
+    ],
     credentials: true,
     optionsSuccessStatus: 200,
   })
@@ -88,13 +92,42 @@ async function run() {
       const result = await foodsCollection.deleteOne(query);
       res.send(result);
     });
+    // update food item
+
+    app.put("/food/:id", async (req, res) => {
+      const id = req.params.id;
+      const foodData = req.body;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          ...foodData,
+        },
+      };
+      const result = await foodsCollection.updateOne(query, updateDoc, options);
+      res.send(result);
+    });
+    // all purchase data
+    app.get("/my-purchase/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const result = await orderCollection.find(query).toArray();
+      res.send(result);
+    });
+    // purchase for food owner
+    app.get("/purchase-requests/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { "buyer.email": email };
+      const result = await orderCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // auth related api jwt generate
     app.post("/jwt", async (req, res) => {
       const user = req.body;
       console.log(user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1h",
+        expiresIn: "7d",
       });
       res
         .cookie("token", token, {
